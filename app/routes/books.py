@@ -1,27 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 
 from app import crud, schemas
-from app.database import engine, Base
+from app.dependencies import get_db
 
-
-# Initialize database tables
-Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Dependency to get the database session
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
-        
-
-# Endpoints
 
 @router.get('/', response_model=list[schemas.Book])
 async def read_books(db: Session = Depends(get_db)):

@@ -1,27 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 
 from app import crud, schemas
-from app.database import engine, Base
+from app.dependencies import get_db
 from app.utils import verify_password, create_access_token
 
 
-# Initialize database tables
-Base.metadata.create_all(bind=engine)
-
 router = APIRouter()
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Dependency to get the database session
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
-        
         
 @router.post('/signup', response_model=schemas.UserOut)
 def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
