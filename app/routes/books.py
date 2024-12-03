@@ -2,11 +2,14 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 
 from app.crud import books_crud as crud
+from app.database import engine, Base
 from app.dependencies import get_db
 from app.schemas import book_schemas as schemas
 from app.schemas import user_schemas as user_schemas
 from app.utils import get_current_user
 
+
+Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
 
